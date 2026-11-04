@@ -8,32 +8,25 @@ import statistics
 import time
 from pathlib import Path
 
-#: Размеры массивов, для которых generate_data.py создаёт файлы.
+
 SIZES = (1_000, 3_000, 10_000, 30_000, 100_000)
 
-#: Для квадратичного алгоритма n = 100 000 исключён: это порядка 15 минут.
-#: Размер 500 берётся как префикс файла на 1 000 элементов — так у нас
-#: остаётся пять точек, как требует задание.
+
 QUADRATIC_SIZES = (500, 1_000, 3_000, 10_000, 30_000)
 
-#: Показатели степени для замера бинарного возведения в степень.
+
 EXPONENTS = (10**3, 10**4, 10**5, 10**6, 10**7)
 
-#: Модуль для возведения в степень. Без него Python считает длинную арифметику,
-#: и замер покажет рост длины чисел, а не число итераций (см. отчёт).
+
 POW_MOD = 1_000_000_007
 POW_BASE = 3
 
-REPEATS = 5           # повторов на точку (берётся медиана)
-POW_CALLS = 20_000    # вызовов binary_pow на один замер: иначе время неизмеримо мало
-
-# ---------------------------------------------------------------------------
-# 1. Алгоритмы (реализуются вручную, без sum/max и встроенного pow)
-# ---------------------------------------------------------------------------
+REPEATS = 5
+POW_CALLS = 20_000
 
 
 def array_sum(a: list[int]) -> int:
-    """Сумма элементов массива. Сложность O(n)."""
+
     total = 0
     for value in a:
         total += value
@@ -41,7 +34,7 @@ def array_sum(a: list[int]) -> int:
 
 
 def array_max(a: list[int]) -> int:
-    """Максимум массива. Сложность O(n)."""
+
     if not a:
         raise ValueError("Максимум пустого массива не определён")
     maximum = a[0]
@@ -54,7 +47,7 @@ def array_max(a: list[int]) -> int:
 
 
 def count_equal_pairs(a: list[int]) -> int:
-    """Число пар равных элементов. Сложность O(n²)."""
+
     pairs = 0
 
     for i in range(len(a)):
@@ -65,7 +58,7 @@ def count_equal_pairs(a: list[int]) -> int:
     return pairs
 
 def binary_pow(x: int, n: int, mod: int | None = None) -> int:
-    """Бинарное возведение в степень. Сложность O(log n)."""
+
     if n < 0:
         raise ValueError("Показатель степени должен быть неотрицательным")
 
@@ -92,13 +85,8 @@ def binary_pow(x: int, n: int, mod: int | None = None) -> int:
     return result
 
 
-# ---------------------------------------------------------------------------
-# 2. Данные варианта: поиск каталога и загрузка
-# ---------------------------------------------------------------------------
-
-
 def find_data_dir(explicit: Path | None) -> Path:
-    """Каталог с данными варианта: --data, либо data/generated рядом с работой."""
+
     if explicit is not None:
         if not explicit.is_dir():
             raise SystemExit(f"Каталог не найден: {explicit}")
@@ -118,7 +106,7 @@ def find_data_dir(explicit: Path | None) -> Path:
 
 
 def check_variant(data_dir: Path, variant: int) -> None:
-    """Сверить номер варианта с паспортом данных (manifest.json)."""
+
     manifest_path = data_dir / "manifest.json"
     if not manifest_path.is_file():
         print(f"ВНИМАНИЕ: в {data_dir} нет manifest.json — "
@@ -136,7 +124,7 @@ def check_variant(data_dir: Path, variant: int) -> None:
 
 
 def load_array(data_dir: Path, kind: str, n: int, limit: int | None = None) -> list[int]:
-    """Загрузить массив arrays_<kind>_<n>.txt; limit — взять только первые limit чисел."""
+
     path = data_dir / f"arrays_{kind}_{n}.txt"
     if not path.is_file():
         raise SystemExit(
@@ -147,14 +135,9 @@ def load_array(data_dir: Path, kind: str, n: int, limit: int | None = None) -> l
     return values[:limit] if limit is not None else values
 
 
-# ---------------------------------------------------------------------------
-# 3. Репрезентативные тесты и инварианты (шаги 1–3 методики верификации)
-# ---------------------------------------------------------------------------
-
-
 def self_check() -> None:
-    """Граничные и типовые случаи + сверка с эталоном (sum, max, pow)."""
-    # Граничные случаи
+
+
     assert array_sum([]) == 0
     assert array_sum([7]) == 7
     try:
@@ -166,12 +149,12 @@ def self_check() -> None:
     assert array_max([7]) == 7
     assert array_max([3, 1, 2]) == 3
     assert count_equal_pairs([]) == 0
-    assert count_equal_pairs([5, 5, 5]) == 3          # пары (0,1), (0,2), (1,2)
+    assert count_equal_pairs([5, 5, 5]) == 3
     assert binary_pow(2, 0) == 1
     assert binary_pow(2, 10) == 1024
     assert binary_pow(2, 10, mod=1000) == 24
 
-    # Сверка с эталонными реализациями на случайных данных
+
     rng = random.Random(0)
     for _ in range(200):
         a = [rng.randint(-50, 50) for _ in range(rng.randint(1, 60))]
@@ -181,25 +164,20 @@ def self_check() -> None:
         x, n = rng.randint(2, 50), rng.randint(0, 64)
         assert binary_pow(x, n, mod=POW_MOD) == pow(x, n, POW_MOD)
 
-    # Дополнительные инварианты для проверки корректности.
+
     assert array_sum([-3, 1, 2]) == 0
     assert array_max([-7, -2, -10]) == -2
     assert count_equal_pairs([1, 2, 3]) == 0
     assert count_equal_pairs([4, 4, 4, 4]) == 6
     assert binary_pow(5, 1) == 5
     assert binary_pow(3, 5, mod=7) == pow(3, 5, 7)
-    # Для массива длины n с одинаковыми элементами число пар равно n(n-1)/2.
+
     print("self_check: OK")
 
 
-# ---------------------------------------------------------------------------
-# 4. Бенчмарк (методика — docs/reproducibility.md)
-# ---------------------------------------------------------------------------
-
-
 def bench(call) -> float:
-    """Медиана времени выполнения call() по REPEATS запускам, с прогревом."""
-    call()  # прогрев — не учитывается
+
+    call()
     times = []
     for _ in range(REPEATS):
         t0 = time.perf_counter()
@@ -209,7 +187,7 @@ def bench(call) -> float:
 
 
 def log_log_slope(points: list[tuple[int, float]]) -> float:
-    """Наклон прямой в осях (log n, log t) — оценка показателя степени."""
+
     xs = [math.log10(n) for n, _ in points]
     ys = [math.log10(t) for _, t in points]
     mx, my = sum(xs) / len(xs), sum(ys) / len(ys)
@@ -218,10 +196,10 @@ def log_log_slope(points: list[tuple[int, float]]) -> float:
 
 
 def run_benchmarks(data_dir: Path) -> dict[str, list[tuple[int, float]]]:
-    """Замеры на данных варианта. Возвращает {имя алгоритма: [(n, t), ...]}."""
+
     results: dict[str, list[tuple[int, float]]] = {}
 
-    # Линейные алгоритмы — на случайных массивах всех размеров
+
     random_arrays = {n: load_array(data_dir, "random", n) for n in SIZES}
     for name, fn in (("array_sum", array_sum), ("array_max", array_max)):
         points = []
@@ -233,7 +211,7 @@ def run_benchmarks(data_dir: Path) -> dict[str, list[tuple[int, float]]]:
             print(f"  n={n:>7}  t={t:.6f} c")
         results[name] = points
 
-    # Квадратичный алгоритм — на массивах с дубликатами (иначе пар почти нет)
+
     print("\ncount_equal_pairs:")
     points = []
     for n in QUADRATIC_SIZES:
@@ -244,8 +222,7 @@ def run_benchmarks(data_dir: Path) -> dict[str, list[tuple[int, float]]]:
         print(f"  n={n:>7}  t={t:.6f} c")
     results["count_equal_pairs"] = points
 
-    # Логарифмический алгоритм: одна операция слишком быстра, замеряем пачку
-    # вызовов и делим на их число. Считаем по модулю — см. POW_MOD.
+
     print(f"\nbinary_pow (по {POW_CALLS} вызовов на точку, по модулю {POW_MOD}):")
     points = []
     for e in EXPONENTS:
@@ -260,16 +237,11 @@ def run_benchmarks(data_dir: Path) -> dict[str, list[tuple[int, float]]]:
     return results
 
 
-# ---------------------------------------------------------------------------
-# 5. Графики
-# ---------------------------------------------------------------------------
-
-
 def plot_results(results: dict[str, list[tuple[int, float]]], out_dir: Path) -> None:
-    """Два графика: log-log для степенных алгоритмов и t(log n) для бинарной степени."""
+
     try:
         import matplotlib
-        matplotlib.use("Agg")  # сохранение в файл без графической оболочки
+        matplotlib.use("Agg")
         import matplotlib.pyplot as plt
     except ImportError:
         print("\nmatplotlib не установлен — графики пропущены "
@@ -306,12 +278,6 @@ def plot_results(results: dict[str, list[tuple[int, float]]], out_dir: Path) -> 
     fig2.savefig(pow_path, dpi=150)
 
     print(f"\nГрафики сохранены:\n  {loglog_path}\n  {pow_path}")
-    # TODO: в отчёте объяснить, почему для binary_pow выбраны ЛИНЕЙНЫЕ оси
-    # по log₂ n, а не log-log (какой вид имеет логарифмическая зависимость
-    # в осях log-log и почему по ней трудно судить о порядке роста).
-
-
-# ---------------------------------------------------------------------------
 
 
 def main() -> None:
@@ -335,8 +301,7 @@ def main() -> None:
     print("\nНаклон в осях log-log (оценка показателя степени):")
     for name in ("array_sum", "array_max", "count_equal_pairs"):
         print(f"  {name:20s} {log_log_slope(results[name]):.3f}")
-    # TODO: сопоставить наклоны с аналитическими оценками из отчёта
-    # и объяснить расхождения (константы, кэш, накладные расходы интерпретатора).
+
 
     args.out.mkdir(parents=True, exist_ok=True)
     plot_results(results, args.out)
