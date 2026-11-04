@@ -1,0 +1,25 @@
+﻿Текст,Поиск,Длина шаблона,"Время, с",Сравнения,Вхождения
+small_alphabet,naive_search,4,0.025325900001917034,116669,32
+small_alphabet,kmp_search,4,0.011209900003450457,114331,32
+small_alphabet,rabin_karp_search,4,0.029763200000161305,128,32
+small_alphabet,boyer_moore_search,4,0.014128200004051905,37788,32
+small_alphabet,naive_search,16,0.017114300004323013,116780,1
+small_alphabet,kmp_search,16,0.011546000001544598,114330,1
+small_alphabet,rabin_karp_search,16,0.030527900002198294,16,1
+small_alphabet,boyer_moore_search,16,0.005834299998241477,15019,1
+small_alphabet,naive_search,64,0.024775900004897267,116724,1
+small_alphabet,kmp_search,64,0.014756199998373631,114262,1
+small_alphabet,rabin_karp_search,64,0.03222000000096159,64,1
+small_alphabet,boyer_moore_search,64,0.006194800000230316,14666,1
+natural,naive_search,4,0.025397600002179388,113920,27
+natural,kmp_search,4,0.0147517000004882,112483,27
+natural,rabin_karp_search,4,0.03044380000210367,108,27
+natural,boyer_moore_search,4,0.010221899996395223,29945,27
+natural,naive_search,16,0.02475570000387961,109448,1
+natural,kmp_search,16,0.014119199993729126,108712,1
+natural,rabin_karp_search,16,0.03203189999476308,16,1
+natural,boyer_moore_search,16,0.0029518000010284595,10206,1
+natural,naive_search,64,0.023970399997779168,104986,1
+natural,kmp_search,64,0.009141299997281749,103951,1
+natural,rabin_karp_search,64,0.03198070000507869,64,1
+natural,boyer_moore_search,64,0.002270099997986108,5770,1
