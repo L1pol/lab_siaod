@@ -42,6 +42,8 @@ def array_sum(a: list[int]) -> int:
 
 def array_max(a: list[int]) -> int:
     """Максимум массива. Сложность O(n)."""
+    if not a:
+        raise ValueError("Максимум пустого массива не определён")
     maximum = a[0]
 
     for i in range(1, len(a)):
@@ -155,6 +157,13 @@ def self_check() -> None:
     # Граничные случаи
     assert array_sum([]) == 0
     assert array_sum([7]) == 7
+    try:
+        array_max([])
+    except ValueError:
+        pass
+    else:
+        raise AssertionError("Ожидался ValueError для пустого массива")
+    assert array_max([7]) == 7
     assert array_max([3, 1, 2]) == 3
     assert count_equal_pairs([]) == 0
     assert count_equal_pairs([5, 5, 5]) == 3          # пары (0,1), (0,2), (1,2)
@@ -329,6 +338,7 @@ def main() -> None:
     # TODO: сопоставить наклоны с аналитическими оценками из отчёта
     # и объяснить расхождения (константы, кэш, накладные расходы интерпретатора).
 
+    args.out.mkdir(parents=True, exist_ok=True)
     plot_results(results, args.out)
 
 
