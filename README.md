@@ -1,6 +1,6 @@
 # Структуры и алгоритмы обработки данных
 
-Вариант 7, seed 37. Каждая папка содержит программу и результаты.
+Вариант 7. Каждая папка содержит программу и результаты.
 
 | Работа | Тема | Отчёт |
 |---|---|---|
@@ -13,7 +13,7 @@
 | [ЛР 7](lab07/) | Поиск подстроки | [Word](lab07/Otchet_siaod_lab7.docx) · [Онлайн](lab07/README.md) |
 | [ЛР 8](lab08/) | Хеш-таблица с цепочками | [Word](lab08/Otchet_siaod_lab8.docx) · [Онлайн](lab08/README.md) |
 
-Для воспроизведения выполните команды из корня репозитория в Python 3.10 или новее.
+Команды для запуска:
 
 ~~~sh
 python -m pip install -r requirements.txt
@@ -28,5 +28,3 @@ python lab06/main.py --variant 7
 python lab07/main.py --variant 7
 python lab08/main.py --variant 7
 ~~~
-
-Генератор, каркас проверок и методика эксперимента адаптированы из [материалов МТУСИ](https://github.com/mel0d1an/data-structures-and-algorithms), кафедра «Программная инженерия», 2026. [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/).
